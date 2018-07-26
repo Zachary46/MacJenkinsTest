@@ -1,25 +1,115 @@
 apply plugin: 'com.android.application'
 
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
+def verCode = 1000
+
+
 android {
     compileSdkVersion 28
+
     defaultConfig {
         applicationId "com.example.zachary.macjenkinstest"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode verCode
+        versionName "1.0.0"
+        flavorDimensions "versionCode" //统一维度
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    //渠道Flavors
+    productFlavors {
+        xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+        }
+        wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
+        }
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'macjenkinkey'
+            keyPassword "123456"
+            storeFile file('/Users/zachary/AndroidStudioProjects/MacJenkinsTest/app/macjenkinkey')
+            storePassword "123456"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
+
+   /* //修改生成的apk名字及输出文件夹
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            //新名字
+            def newName
+            //时间戳
+            def timeNow
+            //输出文件夹
+            def outDirectory
+            //是否为Jenkins打包，输出路径不同
+            if ("true".equals(IS_JENKINS)) {
+                //BUILD_PATH为服务器输出路径
+                timeNow = BUILD_TIME
+                outDirectory = BUILD_PATH_JENKINS
+                //JKApp-v1.0.1-xiaomi-release.apk
+                newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+            } else {
+                //本机打包输出在本机路径
+                timeNow = getDate()
+                outDirectory = BUILD_PATH_LOCAL
+                newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+            }
+            output.outputFile = new File(outDirectory + "/" + timeNow, newName)
+        }
+    }*/
+
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                //新名字
+                def newName
+                //时间戳
+                def timeNow
+                //输出文件夹
+                def outDirectory
+                //是否为Jenkins打包，输出路径不同
+                if ("true".equals(IS_JENKINS)) {
+                    //BUILD_PATH为服务器输出路径
+                    timeNow = BUILD_TIME
+                    outDirectory = BUILD_PATH_JENKINS
+                    //JKApp-v1.0.1-xiaomi-release.apk
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+                } else {
+                    //本机打包输出在本机路径
+                    timeNow = getDate()
+                    outDirectory = BUILD_PATH_LOCAL
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+                }
+                //在这里修改apk文件名
+                outputFileName = newName
+
+            }
+    }
+
+
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
