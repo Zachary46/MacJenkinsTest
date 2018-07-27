@@ -88,16 +88,19 @@ android {
                 def outDirectory
                 //是否为Jenkins打包，输出路径不同
                 if ("true".equals(IS_JENKINS)) {
-                    //BUILD_PATH为服务器输出路径
+
                     timeNow = BUILD_TIME
                     outDirectory = BUILD_PATH_JENKINS
-                    //JKApp-v1.0.1-xiaomi-release.apk
-                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+                    //BUILD_PATH为服务器输出路径
+                    variant.getPackageApplication().outputDirectory = new File(outDirectory)
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '-' + timeNow + '.apk'
                 } else {
-                    //本机打包输出在本机路径
+
                     timeNow = getDate()
                     outDirectory = BUILD_PATH_LOCAL
-                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
+                    //本机打包输出在本机路径
+                    variant.getPackageApplication().outputDirectory = new File(outDirectory)
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '-' + timeNow + '.apk'
                 }
                 //在这里修改apk文件名
                 outputFileName = newName
