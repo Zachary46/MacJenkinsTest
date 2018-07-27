@@ -93,14 +93,14 @@ android {
                     outDirectory = BUILD_PATH_JENKINS
                     //BUILD_PATH为服务器输出路径
                     variant.getPackageApplication().outputDirectory = new File(outDirectory)
-                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '-' + timeNow + '.apk'
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
                 } else {
 
                     timeNow = getDate()
                     outDirectory = BUILD_PATH_LOCAL
                     //本机打包输出在本机路径
                     variant.getPackageApplication().outputDirectory = new File(outDirectory)
-                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '-' + timeNow + '.apk'
+                    newName = APPNAME + "-v" + APP_VERSION + '-' + variant.productFlavors[0].name + '-' + variant.buildType.name + '.apk'
                 }
                 //在这里修改apk文件名
                 outputFileName = newName
